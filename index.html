@@ -69,41 +69,6 @@
         details[open] > summary::before {
             transform: rotate(90deg);
         }
-        /* Custom slider styles */
-        input[type="range"] {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 100%;
-            height: 6px;
-            background: #e5e7eb; /* gray-200 */
-            border-radius: 9999px;
-            outline: none;
-            opacity: 0.7;
-            transition: opacity .2s;
-        }
-        input[type="range"]:hover {
-            opacity: 1;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            background: #4f46e5; /* indigo-600 */
-            cursor: pointer;
-            border-radius: 50%;
-            border: 2px solid white;
-            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-        }
-        input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            background: #4f46e5; /* indigo-600 */
-            cursor: pointer;
-            border-radius: 50%;
-            border: 2px solid white;
-            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -120,6 +85,7 @@
                 <div class="flex justify-between items-center mb-6 border-b border-gray-200 pb-4">
                     <h2 class="text-2xl font-semibold text-gray-900">Financial Details</h2>
                     <div class="flex space-x-2">
+                        <button type="button" id="hardship-btn" class="px-3 py-1 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">Create Hardship Scenario</button>
                         <button type="button" id="randomize-btn" class="px-3 py-1 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">Randomize Empty Fields</button>
                         <button type="button" id="reset-btn" class="px-3 py-1 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">Reset</button>
                     </div>
@@ -147,12 +113,18 @@
                             <option>High-Interest Debt & Cost of Living</option>
                             <option>Reduced Hours at Work</option>
                             <option>Job Loss</option>
+                            <option>Business Downturn</option>
                             <option>Medical Emergency</option>
+                            <option>Disability / Injury</option>
                             <option>Unexpected Home/Auto Repair</option>
                             <option>Divorce / Separation</option>
                             <option>Caring for a Family Member</option>
-                            <option>Other</option>
+                            <option>Student Loan Burden</option>
+                            <option value="Other">Other</option>
                         </select>
+                        <div id="other-reason-container" class="hidden mt-2">
+                            <input type="text" id="other-reason-input" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Please specify">
+                        </div>
                     </div>
 
                     <div class="pt-6 border-t border-gray-200">
@@ -341,9 +313,12 @@
         const actionPlanContent = document.getElementById('action-plan-content');
         const resetBtn = document.getElementById('reset-btn');
         const randomizeBtn = document.getElementById('randomize-btn');
+        const hardshipBtn = document.getElementById('hardship-btn');
         const exportSection = document.getElementById('export-section');
         const exportBtn = document.getElementById('export-btn');
         const copyBtn = document.getElementById('copy-btn');
+        const hardshipReasonSelect = document.getElementById('hardship-reason');
+        const otherReasonContainer = document.getElementById('other-reason-container');
         
         // Global state for financials
         let currentFinancials = {};
@@ -358,7 +333,7 @@
             'mortgage': 'rent', 'nationstar': 'rent', 'mr cooper': 'rent',
             
             // Auto Loans
-            'auto loan': 'vehicle-payment', 'honda': 'vehicle-payment', 'jpmcb auto': 'vehicle-payment', 'nissan-infiniti': 'vehicle-payment', 'nissan motor': 'vehicle-payment',
+            'auto loan': 'vehicle-payment', 'honda': 'vehicle-payment', 'jpmcb auto': 'vehicle-payment', 'nissan-infiniti': 'vehicle-payment', 'nissan motor': 'vehicle-payment', 'wells fargo auto': 'vehicle-payment',
             
             // Other Loans & Credit Cards
             'credit card': 'credit-cards', 'cc payment': 'credit-cards', 'business card': 'credit-cards', 'charge card': 'credit-cards', 'secured card': 'credit-cards', 'secured loc': 'credit-cards',
@@ -407,8 +382,12 @@
 
         // Update indicators on input change
         incomeSourcesContainer.addEventListener('input', updateLiveProfile);
-        document.querySelectorAll('.expense-input, #hardship-reason, #age, #sex').forEach(input => {
+        document.querySelectorAll('.expense-input, #age, #sex, #other-reason-input').forEach(input => {
             input.addEventListener('input', updateLiveProfile);
+        });
+        hardshipReasonSelect.addEventListener('change', () => {
+             otherReasonContainer.classList.toggle('hidden', hardshipReasonSelect.value !== 'Other');
+             updateLiveProfile();
         });
 
         // File Upload Handler
@@ -442,11 +421,15 @@
             fileNameDisplay.textContent = 'No file chosen';
             incomeSourcesContainer.innerHTML = '';
             addIncomeSource(2500);
+            otherReasonContainer.classList.add('hidden');
             updateLiveProfile();
         });
 
         // Randomize Form Handler
         randomizeBtn.addEventListener('click', randomizeData);
+
+        // Hardship Scenario Handler
+        hardshipBtn.addEventListener('click', createHardshipScenario);
 
         // Add Income Source
         addIncomeBtn.addEventListener('click', () => addIncomeSource());
@@ -503,14 +486,12 @@
          * @param {string} text - The text content to parse.
          */
         function parseExpenseText(text) {
-            document.querySelectorAll('.expense-input').forEach(input => input.value = '');
             const lines = text.split('\n').filter(line => line.trim() !== '');
-            if (lines.length < 2) return; // Need at least a header and one data line
+            if (lines.length === 0) return;
 
             const headerLine = lines[0].toLowerCase();
-            const headers = headerLine.split(/\t+/);
+            const headers = headerLine.split(/\s{2,}|\t/); // Split by multiple spaces or tabs
 
-            // Find column indexes using fuzzy matching
             const findIndex = (keys) => headers.findIndex(h => keys.some(key => h.includes(key)));
             
             const nameIndex = findIndex(['account name']);
@@ -518,61 +499,67 @@
             const balanceIndex = findIndex(['balance']);
             const paymentIndex = findIndex(['payment']);
 
-            if (nameIndex === -1 || (balanceIndex === -1 && paymentIndex === -1)) {
-                console.error("Could not find required headers ('Account Name' and 'Balance' or 'Payment')");
-                return; // Exit if essential headers are missing
-            }
+            const hasHeaders = nameIndex !== -1 && (balanceIndex !== -1 || paymentIndex !== -1);
 
-            const dataLines = lines.slice(1);
-            
+            const dataLines = hasHeaders ? lines.slice(1) : lines;
+            const parsedExpenses = {};
+
             dataLines.forEach(line => {
-                const columns = line.split(/\t+/);
-                const accountName = columns[nameIndex]?.toLowerCase() || '';
-                const accountType = (typeIndex > -1 ? columns[typeIndex]?.toLowerCase() : '') || '';
+                const columns = line.split(/\s{2,}|\t/);
+                const accountName = hasHeaders ? columns[nameIndex]?.toLowerCase() || '' : columns[0]?.toLowerCase() || '';
+                const accountType = hasHeaders && typeIndex > -1 ? columns[typeIndex]?.toLowerCase() : '';
 
                 let payment = 0;
 
-                // Priority 1: Use the 'Payment' column if it exists and is valid
-                if (paymentIndex > -1 && columns[paymentIndex]) {
+                if (hasHeaders && paymentIndex > -1 && columns[paymentIndex]) {
                     const paymentValue = parseFloat(columns[paymentIndex].replace(/[\$,]/g, ''));
                     if (!isNaN(paymentValue) && paymentValue > 0) {
                         payment = paymentValue;
                     }
-                } 
-                
-                // Priority 2: If no valid payment, calculate from 'Balance'
-                if (payment === 0 && balanceIndex > -1 && columns[balanceIndex]) {
+                } else if (hasHeaders && balanceIndex > -1 && columns[balanceIndex]) {
                     const balance = parseFloat(columns[balanceIndex].replace(/[\$,]/g, '')) || 0;
                     if (balance > 0) {
-                        if (accountType.includes('card')) { // Catches credit, business, charge, secured cards
+                        if (accountType.includes('card')) {
                             payment = balance * 0.02; 
-                        } else if (accountType.includes('loan')) {
+                        } else if (accountType.includes('loan') || accountType.includes('mortgage')) {
+                            payment = balance * 0.025;
+                        }
+                    }
+                } else { // Fallback for unstructured data
+                    const numberMatches = line.match(/(\$)?[\d,]+(\.\d{2})?/g);
+                    if (!numberMatches || numberMatches.length === 0) return;
+
+                    const balance = parseFloat(numberMatches[0].replace(/[\$,]/g, ''));
+                    const lowerLine = line.toLowerCase();
+                    
+                    if (balance > 0) {
+                        if (lowerLine.includes('card')) {
+                            payment = balance * 0.02; 
+                        } else if (lowerLine.includes('loan') || lowerLine.includes('mortgage')) {
                             payment = balance * 0.025;
                         }
                     }
                 }
                 
                 if (payment > 0) {
-                    let targetInputId = null;
-                    // Use a combined string for better keyword matching
                     const combinedInfo = accountName + " " + accountType;
-
                     for (const keyword in expenseKeywordMap) {
                         if (combinedInfo.includes(keyword)) {
-                            targetInputId = expenseKeywordMap[keyword];
+                            const targetInputId = expenseKeywordMap[keyword];
+                            parsedExpenses[targetInputId] = (parsedExpenses[targetInputId] || 0) + payment;
                             break;
-                        }
-                    }
-
-                    if (targetInputId) {
-                        const inputElement = document.getElementById(targetInputId);
-                        if (inputElement) {
-                            const existingValue = parseFloat(inputElement.value) || 0;
-                            inputElement.value = (existingValue + payment).toFixed(2);
                         }
                     }
                 }
             });
+
+            // Update only the relevant fields
+            for (const [id, value] of Object.entries(parsedExpenses)) {
+                const inputElement = document.getElementById(id);
+                if (inputElement) {
+                    inputElement.value = value.toFixed(2);
+                }
+            }
             updateLiveProfile();
         }
 
@@ -605,8 +592,53 @@
         /**
          * Fills the form with random, realistic data for a hardship scenario.
          */
-        function randomizeData() {
-            // Randomize Demographics if empty
+        async function randomizeData() {
+            const ageInput = document.getElementById('age');
+            const sexDropdown = document.getElementById('sex');
+            const zip = zipCodeInput.value;
+
+            if (ageInput.value && sexDropdown.value && /^\d{5}$/.test(zip)) {
+                // AI-powered randomization
+                const prompt = `Generate a realistic monthly budget for a ${ageInput.value}-year-old ${sexDropdown.value.toLowerCase()} in zip code ${zip} who is experiencing financial hardship. Provide a JSON object with keys for income (an array of objects with "type" and "amount") and expenses (an object with keys like "rent", "groceries", "credit-cards", etc., matching the expense IDs in the form). The total expenses should be slightly higher than the total income.`;
+                
+                try {
+                    const responseText = await callGeminiApi(prompt);
+                    const cleanedText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
+                    const data = JSON.parse(cleanedText);
+
+                    // Fill income
+                    if (data.income && data.income.length > 0) {
+                        incomeSourcesContainer.innerHTML = '';
+                        data.income.forEach(source => {
+                            addIncomeSource(source.amount);
+                            const newRow = incomeSourcesContainer.lastChild;
+                            newRow.querySelector('.income-type-input').value = source.type;
+                        });
+                    }
+
+                    // Fill expenses
+                    if (data.expenses) {
+                        for (const [id, value] of Object.entries(data.expenses)) {
+                            const element = document.getElementById(id);
+                            if (element && (!element.value || parseFloat(element.value) === 0)) {
+                                element.value = value.toFixed(2);
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error("AI randomization failed, using fallback.", e);
+                    fallbackRandomize();
+                }
+
+            } else {
+                // Fallback randomization
+                fallbackRandomize();
+            }
+            updateLiveProfile();
+        }
+
+        function fallbackRandomize() {
+             // Randomize Demographics if empty
             const ageInput = document.getElementById('age');
             if (!ageInput.value) {
                 ageInput.value = Math.floor(Math.random() * (65 - 22 + 1) + 22);
@@ -666,8 +698,35 @@
             // Randomize hardship reason
             const reasonDropdown = document.getElementById('hardship-reason');
             reasonDropdown.selectedIndex = Math.floor(Math.random() * reasonDropdown.options.length);
+        }
 
-            updateLiveProfile();
+        /**
+         * Creates a hardship scenario by adjusting income to just cover expenses after reducing debt payments.
+         */
+        function createHardshipScenario() {
+            let otherExpenses = 0;
+            document.querySelectorAll('.expense-input').forEach(input => {
+                if (input.id !== 'credit-cards') {
+                    otherExpenses += parseFloat(input.value) || 0;
+                }
+            });
+
+            const creditCardInput = document.getElementById('credit-cards');
+            const originalCreditCardPayment = parseFloat(creditCardInput.value) || 0;
+            
+            // Assume a DMP reduces the payment to ~30% of the original (proxy for 2% APR)
+            const newCreditCardPayment = originalCreditCardPayment * 0.30;
+            creditCardInput.value = newCreditCardPayment.toFixed(2);
+
+            // New income should just cover the new total expenses
+            const newTotalExpenses = otherExpenses + newCreditCardPayment;
+            const newIncome = newTotalExpenses + (Math.random() * 75 + 25); // Add a small buffer of $25-$100
+
+            // Update income sources
+            incomeSourcesContainer.innerHTML = ''; // Clear existing
+            addIncomeSource(newIncome); // Add a single new source with the calculated income
+
+            updateLiveProfile(); // Refresh everything
         }
 
 
@@ -698,16 +757,25 @@
 
             try {
                 if (brand) {
-                    const prompt = `Provide ONLY a JSON array of 3 common monthly plans for ${brand} ${type} in zip code ${zip}, from cheapest to most expensive. The JSON should be an array of objects, each with "plan_name" (string) and "monthly_cost" (number) properties. Do not include any text before or after the JSON array. Example: [{"plan_name": "Basic", "monthly_cost": 50.00}]`;
-                    const responseText = await callGeminiApi(prompt);
-                    const cleanedText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
-                    const plans = JSON.parse(cleanedText);
+                    const prompt = `List 3 common monthly plans for ${brand} ${type} in zip code ${zip}, from cheapest to most expensive.`;
+                    const schema = {
+                        type: "ARRAY",
+                        items: {
+                            type: "OBJECT",
+                            properties: { "plan_name": { "type": "STRING" }, "monthly_cost": { "type": "NUMBER" } },
+                            required: ["plan_name", "monthly_cost"]
+                        }
+                    };
+                    const plans = await callGeminiForJson(prompt, schema);
                     showPlanModal(plans, targetId, `${brand} ${type} Plans`);
                 } else {
-                    const prompt = `Provide ONLY a JSON object for the average monthly cost for ${type} for a typical household in zip code ${zip}. The JSON should have one key: "average_cost" (number). Do not include any text before or after the JSON object. Example: {"average_cost": 150.75}`;
-                    const responseText = await callGeminiApi(prompt);
-                    const cleanedText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
-                    const result = JSON.parse(cleanedText);
+                    const prompt = `What is the average monthly cost for ${type} for a typical household in zip code ${zip}?`;
+                     const schema = {
+                        type: "OBJECT",
+                        properties: { "average_cost": { "type": "NUMBER" } },
+                        required: ["average_cost"]
+                    };
+                    const result = await callGeminiForJson(prompt, schema);
                     document.getElementById(targetId).value = result.average_cost.toFixed(2);
                     updateLiveProfile();
                 }
@@ -767,7 +835,10 @@
             
             const age = document.getElementById('age').value;
             const sex = document.getElementById('sex').value;
-            const reason = document.getElementById('hardship-reason').value;
+            let reason = hardshipReasonSelect.value;
+            if (reason === 'Other') {
+                reason = document.getElementById('other-reason-input').value || 'Other';
+            }
             
             let totalIncome = 0;
             const incomeSources = [];
@@ -998,6 +1069,22 @@
             }
             return "Could not generate a response.";
         }
+        
+        async function callGeminiForJson(prompt, schema) {
+            const payload = {
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: schema
+                }
+            };
+            const result = await callGeminiApi(prompt);
+             if (result) {
+                const cleanedText = result.replace(/```json/g, '').replace(/```/g, '').trim();
+                return JSON.parse(cleanedText);
+            }
+            throw new Error("Could not parse JSON from API response.");
+        }
 
         /**
          * Displays the final generated profile in the output area.
@@ -1020,11 +1107,16 @@
                 </div>
                 <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
                     <h3 class="text-lg font-semibold text-slate-800 mb-3">Financial Summary</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li class="flex justify-between py-2 border-b border-slate-200"><span class="font-medium text-slate-700">Total Monthly Income</span><span class="font-medium text-emerald-600">$${income.toFixed(2)}</span></li>
-                        <li class="flex justify-between py-2 border-b border-slate-200"><span class="font-medium text-slate-700">Total Monthly Expenses</span><span class="font-medium text-red-600">$${totalExpenses.toFixed(2)}</span></li>
-                        <li class="flex justify-between py-2 font-bold text-lg"><span>${shortfallLabel}</span><span class="${shortfallClass}">$${Math.abs(shortfall).toFixed(2)}</span></li>
-                    </ul>
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                        <div>
+                            <div class="text-sm text-slate-500">Monthly</div>
+                            <div class="font-semibold text-lg ${shortfall < 0 ? 'text-red-500' : 'text-emerald-500'}">${shortfall < 0 ? '-' : '+'}$${Math.abs(shortfall).toFixed(2)}</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-slate-500">Yearly</div>
+                            <div class="font-semibold text-lg ${shortfall < 0 ? 'text-red-500' : 'text-emerald-500'}">${shortfall < 0 ? '-' : '+'}$${(Math.abs(shortfall) * 12).toFixed(2)}</div>
+                        </div>
+                    </div>
                 </div>
                 <div class="mt-6">
                      <h3 class="text-lg font-semibold text-slate-800 mb-3">Complete Expense Breakdown</h3>
