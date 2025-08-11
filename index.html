@@ -9,10 +9,11 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #f9fafb; /* gray-50 */
         }
         .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
+            border: 4px solid #e5e7eb; /* gray-200 */
+            border-top: 4px solid #4f46e5; /* indigo-600 */
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -39,25 +40,111 @@
         .modal-container {
             transition: transform 0.3s ease;
         }
+        details > summary {
+            list-style: none;
+        }
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
+        details > summary {
+            padding: 0.75rem 1rem;
+            background-color: #f9fafb; /* gray-50 */
+            border-radius: 0.5rem;
+            transition: background-color 0.2s ease-in-out;
+             border: 1px solid #e5e7eb; /* gray-200 */
+        }
+        details[open] > summary {
+            background-color: #f3f4f6; /* gray-100 */
+        }
+        details > summary:hover {
+            background-color: #f3f4f6; /* gray-100 */
+        }
+        details > summary::before {
+            content: '►';
+            margin-right: 0.75rem;
+            font-size: 0.8em;
+            color: #6b7280; /* gray-500 */
+            transition: transform 0.2s ease-in-out;
+        }
+        details[open] > summary::before {
+            transform: rotate(90deg);
+        }
+        /* Custom slider styles */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #e5e7eb; /* gray-200 */
+            border-radius: 9999px;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+        input[type="range"]:hover {
+            opacity: 1;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #4f46e5; /* indigo-600 */
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #4f46e5; /* indigo-600 */
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
     <div class="container mx-auto p-4 sm:p-6 lg:p-8">
-        <header class="text-center mb-8">
-            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">Persona Hardship Profile Generator</h1>
-            <p class="text-md text-gray-600 mt-2">Create a realistic persona profile facing financial challenges.</p>
+        <header class="text-center mb-10">
+            <h1 class="text-4xl sm:text-5xl font-bold text-gray-900">Persona Hardship Profile Generator</h1>
+            <p class="text-lg text-gray-600 mt-3 max-w-2xl mx-auto">Create realistic financial scenarios to better understand and assist individuals facing hardship.</p>
         </header>
 
         <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Input Form -->
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <h2 class="text-2xl font-semibold mb-6 border-b pb-3">Financial Details</h2>
-                <form id="persona-form" class="space-y-4">
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                <div class="flex justify-between items-center mb-6 border-b border-gray-200 pb-4">
+                    <h2 class="text-2xl font-semibold text-gray-900">Financial Details</h2>
+                    <div class="flex space-x-2">
+                        <button type="button" id="randomize-btn" class="px-3 py-1 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">Randomize Empty Fields</button>
+                        <button type="button" id="reset-btn" class="px-3 py-1 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">Reset</button>
+                    </div>
+                </div>
+                <form id="persona-form" class="space-y-6">
                     
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="age" class="block text-sm font-medium text-gray-700">Age</label>
+                            <input type="number" id="age" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="e.g., 35">
+                        </div>
+                        <div>
+                            <label for="sex" class="block text-sm font-medium text-gray-700">Sex</label>
+                            <select id="sex" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                <option>Male</option>
+                                <option>Female</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div>
                         <label for="hardship-reason" class="block text-sm font-medium text-gray-700">Reason for Hardship</label>
                         <select id="hardship-reason" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <option>High-Interest Debt & Cost of Living</option>
                             <option>Reduced Hours at Work</option>
                             <option>Job Loss</option>
                             <option>Medical Emergency</option>
@@ -68,106 +155,148 @@
                         </select>
                     </div>
 
-                    <div>
-                        <label for="income-slider" class="block text-sm font-medium text-gray-700">Monthly Income: <span id="income-value" class="font-bold text-indigo-600">$2500</span></label>
-                        <input type="range" id="income-slider" min="0" max="10000" value="2500" step="50" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                        <div id="income-surplus-indicator" class="text-center text-sm font-medium mt-2 p-2 rounded-md"></div>
+                    <div class="pt-6 border-t border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <label class="block text-sm font-medium text-gray-700">Income Sources</label>
+                            <button type="button" id="add-income-btn" class="px-3 py-1 text-xs font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">+</button>
+                        </div>
+                        <div id="income-sources-container" class="mt-2 space-y-2">
+                            <!-- Income sources will be added here -->
+                        </div>
+                        <div class="mt-3 text-right font-semibold text-gray-800">
+                            Total Monthly Income: <span id="total-income-display">$0.00</span>
+                        </div>
+                        <div id="income-surplus-indicator" class="text-center text-sm font-medium mt-3 p-2 rounded-lg"></div>
                     </div>
 
-                     <div class="pt-4 border-t">
+                     <div class="pt-6 border-t border-gray-200">
                          <label for="zip-code" class="block text-sm font-medium text-gray-700">Zip Code for Expense Estimates</label>
-                         <input type="text" id="zip-code" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="e.g., 90210">
+                         <input type="text" id="zip-code" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="e.g., 90210">
                          <p id="zip-error" class="text-xs text-red-600 mt-1 hidden"></p>
                     </div>
 
-                    <div class="pt-4 border-t">
+                    <div class="pt-6 border-t border-gray-200">
                         <label class="block text-sm font-medium text-gray-700">Add Expenses (Upload or Paste)</label>
                         <div class="mt-2">
                             <input type="file" id="expense-file-input" class="hidden" accept=".txt">
-                            <label for="expense-file-input" class="w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 cursor-pointer">
+                            <label for="expense-file-input" class="w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 cursor-pointer transition-colors">
                                <span>Choose File</span>
                             </label>
                             <span id="file-name" class="ml-3 text-sm text-gray-500">No file chosen</span>
                         </div>
                         <div class="mt-2">
                              <textarea id="paste-expenses" rows="4" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Or paste expenses here..."></textarea>
-                             <button type="button" id="parse-paste-btn" class="mt-2 w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                             <button type="button" id="parse-paste-btn" class="mt-2 w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors">
                                 Parse Pasted Text
                              </button>
                         </div>
                     </div>
 
-                    <h3 class="text-lg font-semibold pt-4 border-t mt-6">Monthly Expenses</h3>
+                    <h3 class="text-lg font-semibold pt-6 border-t border-gray-200">Monthly Expenses</h3>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-5">
-                        <!-- Expense inputs will be dynamically populated -->
-                        <div><label for="rent" class="block text-sm font-medium text-gray-700">Rent / Mortgage</label><input type="number" id="rent" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
-                        <div><label for="vehicle-payment" class="block text-sm font-medium text-gray-700">Vehicle Payment</label><input type="number" id="vehicle-payment" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
-                        <div><label for="auto-insurance" class="block text-sm font-medium text-gray-700">Auto Insurance</label><input type="number" id="auto-insurance" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
-                        <div><label for="fuel" class="block text-sm font-medium text-gray-700">Fuel</label><input type="number" id="fuel" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
-                        
-                        <div class="col-span-1 sm:col-span-2"><hr class="my-2"></div>
-                        <div>
-                            <label for="utilities" class="block text-sm font-medium text-gray-700">Electricity & Gas</label>
-                            <div class="flex items-center space-x-2">
-                                <input type="number" id="utilities" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0">
-                                <button type="button" class="get-avg-btn p-2 rounded-md bg-gray-100 hover:bg-gray-200" data-type="Electricity & Gas" data-target="utilities"><span class="spinner-tiny hidden"></span><span>Get Avg</span></button>
+                    <div class="space-y-3">
+                        <!-- Housing Category -->
+                        <details class="bg-gray-50 rounded-lg border border-gray-200">
+                            <summary class="font-semibold cursor-pointer text-gray-800">Housing</summary>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-5 mt-4 p-4 border-t border-gray-200">
+                                <div><label for="rent" class="block text-sm font-medium text-gray-700">Rent / Mortgage</label><input type="number" step="0.01" id="rent" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
+                                <div>
+                                    <label for="utilities" class="block text-sm font-medium text-gray-700">Electricity & Gas</label>
+                                    <div class="flex items-center space-x-2">
+                                        <input type="number" step="0.01" id="utilities" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0">
+                                        <button type="button" class="get-avg-btn p-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs" data-type="Electricity & Gas" data-target="utilities"><span class="spinner-tiny hidden"></span><span>Get Avg</span></button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="water" class="block text-sm font-medium text-gray-700">Water / Sewer / Trash</label>
+                                    <div class="flex items-center space-x-2">
+                                        <input type="number" step="0.01" id="water" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0">
+                                        <button type="button" class="get-avg-btn p-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs" data-type="Water / Sewer / Trash" data-target="water"><span class="spinner-tiny hidden"></span><span>Get Avg</span></button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div>
-                            <label for="water" class="block text-sm font-medium text-gray-700">Water / Sewer / Trash</label>
-                            <div class="flex items-center space-x-2">
-                                <input type="number" id="water" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0">
-                                <button type="button" class="get-avg-btn p-2 rounded-md bg-gray-100 hover:bg-gray-200" data-type="Water / Sewer / Trash" data-target="water"><span class="spinner-tiny hidden"></span><span>Get Avg</span></button>
-                            </div>
-                        </div>
+                        </details>
 
-                        <div class="col-span-1 sm:col-span-2"><hr class="my-2"></div>
-                        <div>
-                            <label for="internet" class="block text-sm font-medium text-gray-700">Internet / Cable</label>
-                            <input type="text" id="internet-brand" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-sm" placeholder="Brand (e.g., Verizon)">
-                            <div class="flex items-center space-x-2 mt-1">
-                                <input type="number" id="internet" class="expense-input block w-full rounded-md border-gray-300 shadow-sm" placeholder="0">
-                                <button type="button" class="get-avg-btn p-2 rounded-md bg-gray-100 hover:bg-gray-200" data-type="Internet" data-target="internet" data-brand-source="internet-brand"><span class="spinner-tiny hidden"></span><span>Get Plans</span></button>
+                        <!-- Transportation Category -->
+                        <details class="bg-gray-50 rounded-lg border border-gray-200">
+                            <summary class="font-semibold cursor-pointer text-gray-800">Transportation</summary>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-5 mt-4 p-4 border-t border-gray-200">
+                                <div><label for="vehicle-payment" class="block text-sm font-medium text-gray-700">Vehicle Payment</label><input type="number" step="0.01" id="vehicle-payment" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
+                                <div><label for="auto-insurance" class="block text-sm font-medium text-gray-700">Auto Insurance</label><input type="number" step="0.01" id="auto-insurance" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
+                                <div><label for="fuel" class="block text-sm font-medium text-gray-700">Fuel</label><input type="number" step="0.01" id="fuel" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
                             </div>
-                        </div>
-                        <div>
-                            <label for="phone" class="block text-sm font-medium text-gray-700">Cell Phone</label>
-                            <input type="text" id="phone-brand" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-sm" placeholder="Brand (e.g., T-Mobile)">
-                            <div class="flex items-center space-x-2 mt-1">
-                                <input type="number" id="phone" class="expense-input block w-full rounded-md border-gray-300 shadow-sm" placeholder="0">
-                                <button type="button" class="get-avg-btn p-2 rounded-md bg-gray-100 hover:bg-gray-200" data-type="Cell Phone" data-target="phone" data-brand-source="phone-brand"><span class="spinner-tiny hidden"></span><span>Get Plans</span></button>
+                        </details>
+
+                        <!-- Living Expenses Category -->
+                        <details class="bg-gray-50 rounded-lg border border-gray-200" open>
+                             <summary class="font-semibold cursor-pointer text-gray-800">Living Expenses</summary>
+                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-5 mt-4 p-4 border-t border-gray-200">
+                                <div><label for="groceries" class="block text-sm font-medium text-gray-700">Groceries & Hygiene</label><input type="number" step="0.01" id="groceries" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
+                                <div><label for="dining" class="block text-sm font-medium text-gray-700">Dining Out</label><input type="number" step="0.01" id="dining" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
+                                <div>
+                                    <label for="internet" class="block text-sm font-medium text-gray-700">Internet / Cable</label>
+                                    <input type="text" id="internet-brand" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-sm" placeholder="Brand (e.g., Verizon)">
+                                    <div class="flex items-center space-x-2 mt-1">
+                                        <input type="number" step="0.01" id="internet" class="expense-input block w-full rounded-md border-gray-300 shadow-sm" placeholder="0">
+                                        <button type="button" class="get-avg-btn p-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs" data-type="Internet" data-target="internet" data-brand-source="internet-brand"><span class="spinner-tiny hidden"></span><span>Get Plans</span></button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="phone" class="block text-sm font-medium text-gray-700">Cell Phone</label>
+                                    <input type="text" id="phone-brand" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-sm" placeholder="Brand (e.g., T-Mobile)">
+                                    <div class="flex items-center space-x-2 mt-1">
+                                        <input type="number" step="0.01" id="phone" class="expense-input block w-full rounded-md border-gray-300 shadow-sm" placeholder="0">
+                                        <button type="button" class="get-avg-btn p-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs" data-type="Cell Phone" data-target="phone" data-brand-source="phone-brand"><span class="spinner-tiny hidden"></span><span>Get Plans</span></button>
+                                    </div>
+                                </div>
+                                <div><label for="health-insurance" class="block text-sm font-medium text-gray-700">Health Insurance</label><input type="number" step="0.01" id="health-insurance" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
+                                <div><label for="prescriptions" class="block text-sm font-medium text-gray-700">Prescriptions</label><input type="number" step="0.01" id="prescriptions" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
+                                <div><label for="grooming" class="block text-sm font-medium text-gray-700">Grooming</label><input type="number" step="0.01" id="grooming" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
+                                <div><label for="pets" class="block text-sm font-medium text-gray-700">Pets</label><input type="number" step="0.01" id="pets" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
+                                <div><label for="recreation" class="block text-sm font-medium text-gray-700">Recreation/Gym</label><input type="number" step="0.01" id="recreation" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
+                             </div>
+                        </details>
+
+                        <!-- Debts & Obligations Category -->
+                        <details class="bg-gray-50 rounded-lg border border-gray-200" open>
+                            <summary class="font-semibold cursor-pointer text-gray-800">Debts & Obligations</summary>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-5 mt-4 p-4 border-t border-gray-200">
+                                <div><label for="credit-cards" class="block text-sm font-medium text-gray-700">Credit Card Payments</label><input type="number" step="0.01" id="credit-cards" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
+                                <div><label for="taxes" class="block text-sm font-medium text-gray-700">Past Due Taxes</label><input type="number" step="0.01" id="taxes" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
+                                <div><label for="family-support" class="block text-sm font-medium text-gray-700">Family Support</label><input type="number" step="0.01" id="family-support" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
+                                <div><label for="charity" class="block text-sm font-medium text-gray-700">Charity</label><input type="number" step="0.01" id="charity" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
+                                <div><label for="savings" class="block text-sm font-medium text-gray-700">Savings</label><input type="number" step="0.01" id="savings" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
                             </div>
-                        </div>
-                        <div class="col-span-1 sm:col-span-2"><hr class="my-2"></div>
-
-                        <!-- Other Expenses -->
-                        <div><label for="groceries" class="block text-sm font-medium text-gray-700">Groceries & Hygiene</label><input type="number" id="groceries" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
-                        <div><label for="dining" class="block text-sm font-medium text-gray-700">Dining Out</label><input type="number" id="dining" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
-                        <div><label for="health-insurance" class="block text-sm font-medium text-gray-700">Health Insurance</label><input type="number" id="health-insurance" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
-                        <div><label for="prescriptions" class="block text-sm font-medium text-gray-700">Prescriptions</label><input type="number" id="prescriptions" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
-                        <div><label for="family-support" class="block text-sm font-medium text-gray-700">Family Support</label><input type="number" id="family-support" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
-                        <div><label for="taxes" class="block text-sm font-medium text-gray-700">Past Due Taxes</label><input type="number" id="taxes" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
-                        <div><label for="grooming" class="block text-sm font-medium text-gray-700">Grooming</label><input type="number" id="grooming" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
-                        <div><label for="pets" class="block text-sm font-medium text-gray-700">Pets</label><input type="number" id="pets" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
-                        <div><label for="charity" class="block text-sm font-medium text-gray-700">Charity</label><input type="number" id="charity" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
-                        <div><label for="savings" class="block text-sm font-medium text-gray-700">Savings</label><input type="number" id="savings" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
-                        <div><label for="recreation" class="block text-sm font-medium text-gray-700">Recreation/Gym</label><input type="number" id="recreation" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
-                        <div><label for="credit-cards" class="block text-sm font-medium text-gray-700">Credit Card Payments</label><input type="number" id="credit-cards" class="expense-input mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="0"></div>
-                    </div>
-
-                    <div class="pt-5">
-                        <button type="submit" id="generate-btn" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Generate Profile
-                        </button>
+                        </details>
                     </div>
                 </form>
             </div>
 
             <!-- Output Profile -->
-            <div id="profile-output" class="bg-white p-6 rounded-lg shadow-md hidden">
+            <div id="profile-output" class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
                  <div id="loader" class="loader mx-auto my-12 hidden"></div>
-                 <div id="profile-content"></div>
+                 <div id="profile-content">
+                    <!-- Initial placeholder -->
+                    <div class="text-center text-gray-500 py-12">
+                        <p>Your generated profile will appear here.</p>
+                        <p class="text-sm mt-2">Adjust the details on the left to get started.</p>
+                    </div>
+                 </div>
+                 <div id="action-plan-section" class="hidden mt-6">
+                    <button id="get-action-plan-btn" class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors">
+                        ✨ Suggest an Action Plan
+                    </button>
+                    <div id="action-plan-loader" class="loader mx-auto my-4 hidden"></div>
+                    <div id="action-plan-content" class="mt-4 p-4 bg-emerald-50 rounded-lg hidden"></div>
+                 </div>
+                 <div id="export-section" class="hidden mt-4 space-y-2">
+                    <button id="copy-btn" class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors">
+                        Copy Table
+                    </button>
+                    <button id="export-btn" class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors">
+                        Export to Google Sheets (CSV)
+                    </button>
+                 </div>
             </div>
         </main>
     </div>
@@ -177,7 +306,7 @@
         <div class="modal-container bg-white w-full max-w-md p-6 rounded-lg shadow-xl transform scale-95">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 id="modal-title" class="text-xl font-semibold">Select a Plan</h3>
-                <button id="modal-close-btn" class="text-gray-500 hover:text-gray-800">&times;</button>
+                <button id="modal-close-btn" class="text-gray-500 hover:text-gray-800 text-2xl leading-none">&times;</button>
             </div>
             <div id="modal-body" class="mt-4 max-h-60 overflow-y-auto">
                 <!-- Plan options will be injected here -->
@@ -189,12 +318,12 @@
     <script>
         // DOM Elements
         const form = document.getElementById('persona-form');
-        const generateBtn = document.getElementById('generate-btn');
         const profileOutput = document.getElementById('profile-output');
         const profileContent = document.getElementById('profile-content');
         const loader = document.getElementById('loader');
-        const incomeSlider = document.getElementById('income-slider');
-        const incomeValueDisplay = document.getElementById('income-value');
+        const incomeSourcesContainer = document.getElementById('income-sources-container');
+        const addIncomeBtn = document.getElementById('add-income-btn');
+        const totalIncomeDisplay = document.getElementById('total-income-display');
         const incomeSurplusIndicator = document.getElementById('income-surplus-indicator');
         const expenseFileInput = document.getElementById('expense-file-input');
         const fileNameDisplay = document.getElementById('file-name');
@@ -206,17 +335,58 @@
         const modalTitle = document.getElementById('modal-title');
         const modalBody = document.getElementById('modal-body');
         const modalCloseBtn = document.getElementById('modal-close-btn');
+        const actionPlanSection = document.getElementById('action-plan-section');
+        const getActionPlanBtn = document.getElementById('get-action-plan-btn');
+        const actionPlanLoader = document.getElementById('action-plan-loader');
+        const actionPlanContent = document.getElementById('action-plan-content');
+        const resetBtn = document.getElementById('reset-btn');
+        const randomizeBtn = document.getElementById('randomize-btn');
+        const exportSection = document.getElementById('export-section');
+        const exportBtn = document.getElementById('export-btn');
+        const copyBtn = document.getElementById('copy-btn');
+        
+        // Global state for financials
+        let currentFinancials = {};
 
         // Initial Setup
+        addIncomeSource(); // Add one income source by default
         updateSurplusIndicator();
 
-        // Keyword map for parsing
+        // Comprehensive Keyword map for parsing
         const expenseKeywordMap = {
+            // Mortgage
             'mortgage': 'rent', 'nationstar': 'rent', 'mr cooper': 'rent',
-            'auto loan': 'vehicle-payment', 'honda': 'vehicle-payment', 'jpmcb': 'vehicle-payment',
+            
+            // Auto Loans
+            'auto loan': 'vehicle-payment', 'honda': 'vehicle-payment', 'jpmcb auto': 'vehicle-payment', 'nissan-infiniti': 'vehicle-payment', 'nissan motor': 'vehicle-payment',
+            
+            // Other Loans & Credit Cards
+            'credit card': 'credit-cards', 'cc payment': 'credit-cards', 'business card': 'credit-cards', 'charge card': 'credit-cards', 'secured card': 'credit-cards', 'secured loc': 'credit-cards',
+            'affirm': 'credit-cards',
+            'american express': 'credit-cards', 'amex': 'credit-cards', 
+            'apple card': 'credit-cards', 'goldman sachs': 'credit-cards',
+            'bank of america': 'credit-cards', 
+            'barclays': 'credit-cards', 
+            'capital one': 'credit-cards', 
+            'cbna': 'credit-cards', 
+            'citi cards': 'credit-cards', 'citibank': 'credit-cards', 'the home depot': 'credit-cards', 'macys': 'credit-cards',
+            'comenity': 'credit-cards', 'breadrwds': 'credit-cards',
+            'credit one': 'credit-cards', 'credit karma': 'credit-cards',
+            'discover': 'credit-cards', 
+            'elan finl': 'credit-cards', 
+            'embark': 'credit-cards',
+            'fb&t': 'credit-cards', 'mercury': 'credit-cards', 'fetti fingerhut': 'credit-cards',
+            'fnb omaha': 'credit-cards', 
+            'jpmcb card': 'credit-cards', 
+            'pnc bank': 'credit-cards', 'pncbank': 'credit-cards',
+            'prosper': 'credit-cards',
+            'syncb': 'credit-cards', 'synchrony': 'credit-cards', 'amazon': 'credit-cards', 'brandsmart': 'credit-cards', 'chevron': 'credit-cards', 'city furniture': 'credit-cards',
+            'td bank': 'credit-cards',
+            
+            // Standard Expenses
             'auto insurance': 'auto-insurance', 'car insurance': 'auto-insurance',
-            'fuel': 'fuel', 'gas': 'fuel',
-            'electric': 'utilities', 'utilities': 'utilities',
+            'fuel': 'fuel',
+            'electric': 'utilities', 'utilities': 'utilities', 'gas': 'utilities',
             'water': 'water', 'sewer': 'water', 'trash': 'water',
             'internet': 'internet', 'cable': 'internet', 'tv': 'internet', 'verizon': 'internet', 'comcast': 'internet', 'xfinity': 'internet',
             'phone': 'phone', 'cell': 'phone', 't-mobile': 'phone', 'at&t': 'phone',
@@ -230,19 +400,15 @@
             'pet': 'pets',
             'charity': 'charity', 'donation': 'charity',
             'saving': 'savings',
-            'gym': 'recreation', 'recreation': 'recreation', 'storage': 'recreation',
-            'credit card': 'credit-cards', 'cc payment': 'credit-cards', 'amex': 'credit-cards', 'apple card': 'credit-cards', 'capital one': 'credit-cards'
+            'gym': 'recreation', 'recreation': 'recreation', 'storage': 'recreation'
         };
 
         // --- Event Listeners ---
 
         // Update indicators on input change
-        incomeSlider.addEventListener('input', () => {
-            incomeValueDisplay.textContent = `$${incomeSlider.value}`;
-            updateSurplusIndicator();
-        });
-        document.querySelectorAll('.expense-input').forEach(input => {
-            input.addEventListener('input', updateSurplusIndicator);
+        incomeSourcesContainer.addEventListener('input', updateLiveProfile);
+        document.querySelectorAll('.expense-input, #hardship-reason, #age, #sex').forEach(input => {
+            input.addEventListener('input', updateLiveProfile);
         });
 
         // File Upload Handler
@@ -270,8 +436,20 @@
             }
         });
 
-        // Main form submission
-        form.addEventListener('submit', handleFormSubmit);
+        // Reset Form Handler
+        resetBtn.addEventListener('click', () => {
+            form.reset();
+            fileNameDisplay.textContent = 'No file chosen';
+            incomeSourcesContainer.innerHTML = '';
+            addIncomeSource(2500);
+            updateLiveProfile();
+        });
+
+        // Randomize Form Handler
+        randomizeBtn.addEventListener('click', randomizeData);
+
+        // Add Income Source
+        addIncomeBtn.addEventListener('click', () => addIncomeSource());
 
         // Modal close buttons
         modalCloseBtn.addEventListener('click', closeModal);
@@ -284,64 +462,214 @@
             button.addEventListener('click', handleGetAverageClick);
         });
 
+        // Get Action Plan button
+        getActionPlanBtn.addEventListener('click', handleGetActionPlan);
+        
+        // Export Button
+        exportBtn.addEventListener('click', exportToCsv);
+        // Copy Button
+        copyBtn.addEventListener('click', copyTableToClipboard);
+
         // --- Core Functions ---
+        
+        /**
+         * Adds a new income source row to the form.
+         * @param {number} [amount=0] - The initial amount for the income source.
+         */
+        function addIncomeSource(amount = 0) {
+            const div = document.createElement('div');
+            div.className = 'flex items-center space-x-2';
+            div.innerHTML = `
+                <input type="number" step="0.01" class="income-amount-input block w-28 rounded-md border-gray-300 shadow-sm" placeholder="Amount" value="${amount > 0 ? amount : ''}">
+                <select class="income-type-input block w-full rounded-md border-gray-300 shadow-sm">
+                    <option>Salary</option>
+                    <option>Freelance</option>
+                    <option>Side Gig</option>
+                    <option>Benefits</option>
+                    <option>Other</option>
+                </select>
+                <button type="button" class="remove-income-btn text-red-500 hover:text-red-700 font-bold">&times;</button>
+            `;
+            incomeSourcesContainer.appendChild(div);
+            div.querySelector('.remove-income-btn').addEventListener('click', (e) => {
+                e.target.parentElement.remove();
+                updateLiveProfile();
+            });
+        }
 
         /**
          * Parses text (from file or paste) and populates expense fields.
+         * Now reads headers to intelligently map columns.
          * @param {string} text - The text content to parse.
          */
         function parseExpenseText(text) {
             document.querySelectorAll('.expense-input').forEach(input => input.value = '');
-            const lines = text.split('\n');
-            lines.forEach(line => {
-                if (line.trim() === '' || line.toLowerCase().includes('account name')) return;
+            const lines = text.split('\n').filter(line => line.trim() !== '');
+            if (lines.length < 2) return; // Need at least a header and one data line
+
+            const headerLine = lines[0].toLowerCase();
+            const headers = headerLine.split(/\t+/);
+
+            // Find column indexes using fuzzy matching
+            const findIndex = (keys) => headers.findIndex(h => keys.some(key => h.includes(key)));
+            
+            const nameIndex = findIndex(['account name']);
+            const typeIndex = findIndex(['type']);
+            const balanceIndex = findIndex(['balance']);
+            const paymentIndex = findIndex(['payment']);
+
+            if (nameIndex === -1 || (balanceIndex === -1 && paymentIndex === -1)) {
+                console.error("Could not find required headers ('Account Name' and 'Balance' or 'Payment')");
+                return; // Exit if essential headers are missing
+            }
+
+            const dataLines = lines.slice(1);
+            
+            dataLines.forEach(line => {
+                const columns = line.split(/\t+/);
+                const accountName = columns[nameIndex]?.toLowerCase() || '';
+                const accountType = (typeIndex > -1 ? columns[typeIndex]?.toLowerCase() : '') || '';
+
+                let payment = 0;
+
+                // Priority 1: Use the 'Payment' column if it exists and is valid
+                if (paymentIndex > -1 && columns[paymentIndex]) {
+                    const paymentValue = parseFloat(columns[paymentIndex].replace(/[\$,]/g, ''));
+                    if (!isNaN(paymentValue) && paymentValue > 0) {
+                        payment = paymentValue;
+                    }
+                } 
                 
-                const lowerLine = line.toLowerCase();
+                // Priority 2: If no valid payment, calculate from 'Balance'
+                if (payment === 0 && balanceIndex > -1 && columns[balanceIndex]) {
+                    const balance = parseFloat(columns[balanceIndex].replace(/[\$,]/g, '')) || 0;
+                    if (balance > 0) {
+                        if (accountType.includes('card')) { // Catches credit, business, charge, secured cards
+                            payment = balance * 0.02; 
+                        } else if (accountType.includes('loan')) {
+                            payment = balance * 0.025;
+                        }
+                    }
+                }
                 
-                // New Parsing Logic: Find all numbers, use the last one.
-                const numberMatches = line.match(/(\$)?[\d,]+(\.\d{2})?/g);
-                if (!numberMatches || numberMatches.length === 0) return;
+                if (payment > 0) {
+                    let targetInputId = null;
+                    // Use a combined string for better keyword matching
+                    const combinedInfo = accountName + " " + accountType;
 
-                const lastNumberStr = numberMatches[numberMatches.length - 1];
-                const amount = parseFloat(lastNumberStr.replace(/[\$,]/g, ''));
+                    for (const keyword in expenseKeywordMap) {
+                        if (combinedInfo.includes(keyword)) {
+                            targetInputId = expenseKeywordMap[keyword];
+                            break;
+                        }
+                    }
 
-                if (isNaN(amount)) return;
-
-                for (const keyword in expenseKeywordMap) {
-                    if (lowerLine.includes(keyword)) {
-                        const inputId = expenseKeywordMap[keyword];
-                        const inputElement = document.getElementById(inputId);
+                    if (targetInputId) {
+                        const inputElement = document.getElementById(targetInputId);
                         if (inputElement) {
                             const existingValue = parseFloat(inputElement.value) || 0;
-                            inputElement.value = (existingValue + amount).toFixed(2);
+                            inputElement.value = (existingValue + payment).toFixed(2);
                         }
-                        return; // Move to the next line after finding a match
                     }
                 }
             });
-            updateSurplusIndicator(); // Update the live indicator after parsing
+            updateLiveProfile();
         }
 
         /**
          * Updates the live surplus/shortfall indicator based on current income and expenses.
          */
         function updateSurplusIndicator() {
-            const income = parseFloat(incomeSlider.value) || 0;
+            let totalIncome = 0;
+            document.querySelectorAll('.income-amount-input').forEach(input => {
+                totalIncome += parseFloat(input.value) || 0;
+            });
+            totalIncomeDisplay.textContent = `$${totalIncome.toFixed(2)}`;
+
             let totalExpenses = 0;
             document.querySelectorAll('.expense-input').forEach(input => {
                 totalExpenses += parseFloat(input.value) || 0;
             });
 
-            const surplus = income - totalExpenses;
+            const surplus = totalIncome - totalExpenses;
 
             if (surplus >= 0) {
                 incomeSurplusIndicator.textContent = `+$${surplus.toFixed(2)} Surplus`;
-                incomeSurplusIndicator.className = 'text-center text-sm font-medium mt-2 p-2 rounded-md bg-green-100 text-green-800';
+                incomeSurplusIndicator.className = 'text-center text-sm font-medium mt-3 p-2 rounded-lg bg-emerald-100 text-emerald-800';
             } else {
                 incomeSurplusIndicator.textContent = `-$${Math.abs(surplus).toFixed(2)} Shortfall`;
-                incomeSurplusIndicator.className = 'text-center text-sm font-medium mt-2 p-2 rounded-md bg-red-100 text-red-800';
+                incomeSurplusIndicator.className = 'text-center text-sm font-medium mt-3 p-2 rounded-lg bg-red-100 text-red-800';
             }
         }
+
+        /**
+         * Fills the form with random, realistic data for a hardship scenario.
+         */
+        function randomizeData() {
+            // Randomize Demographics if empty
+            const ageInput = document.getElementById('age');
+            if (!ageInput.value) {
+                ageInput.value = Math.floor(Math.random() * (65 - 22 + 1) + 22);
+            }
+            const sexDropdown = document.getElementById('sex');
+            if (sexDropdown.selectedIndex === 0 && Math.random() > 0.5) { // Avoid always picking Male
+                 sexDropdown.selectedIndex = Math.floor(Math.random() * 2);
+            }
+            
+            // Randomize Income if empty
+            if (incomeSourcesContainer.children.length === 1 && (!incomeSourcesContainer.querySelector('.income-amount-input').value || parseFloat(incomeSourcesContainer.querySelector('.income-amount-input').value) === 0)) {
+                incomeSourcesContainer.innerHTML = ''; // Clear default
+                const income = Math.floor(Math.random() * (6000 - 2000 + 1) + 2000);
+                addIncomeSource(income);
+            }
+            const totalIncome = Array.from(document.querySelectorAll('.income-amount-input')).reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
+
+            // Calculate existing expenses
+            let existingExpenses = 0;
+            document.querySelectorAll('.expense-input').forEach(input => {
+                existingExpenses += parseFloat(input.value) || 0;
+            });
+
+            // Create a target expense total that creates a hardship
+            const targetExpenses = totalIncome * (0.98 + Math.random() * 0.2); // 98% to 118% of income
+            let remainingExpensesToAllocate = Math.max(0, targetExpenses - existingExpenses);
+
+            const setExpense = (id, value) => {
+                const element = document.getElementById(id);
+                if (!element.value || parseFloat(element.value) === 0) {
+                    const roundedValue = Math.round(value / 5) * 5; // Round to nearest 5
+                    element.value = roundedValue;
+                    remainingExpensesToAllocate -= roundedValue;
+                }
+            };
+            
+            // Allocate major expenses as a percentage of income, only if empty
+            setExpense('rent', totalIncome * (0.30 + Math.random() * 0.15));
+            setExpense('groceries', totalIncome * (0.10 + Math.random() * 0.10));
+            setExpense('credit-cards', totalIncome * (0.10 + Math.random() * 0.15));
+
+            if (Math.random() > 0.2) { // 80% chance of having a car
+                setExpense('vehicle-payment', totalIncome * (0.08 + Math.random() * 0.10));
+                setExpense('auto-insurance', 100 + Math.random() * 150);
+                setExpense('fuel', 100 + Math.random() * 200);
+            }
+
+            // Allocate smaller, more fixed expenses, only if empty
+            setExpense('utilities', 100 + Math.random() * 200);
+            setExpense('water', 40 + Math.random() * 80);
+            setExpense('internet', 50 + Math.random() * 80);
+            setExpense('phone', 60 + Math.random() * 100);
+            setExpense('health-insurance', Math.random() > 0.5 ? 100 + Math.random() * 300 : 0);
+            setExpense('dining', remainingExpensesToAllocate > 0 ? Math.min(remainingExpensesToAllocate * 0.1, 50 + Math.random() * 100) : 0);
+            setExpense('recreation', remainingExpensesToAllocate > 0 ? Math.min(remainingExpensesToAllocate * 0.05, 20 + Math.random() * 50) : 0);
+            
+            // Randomize hardship reason
+            const reasonDropdown = document.getElementById('hardship-reason');
+            reasonDropdown.selectedIndex = Math.floor(Math.random() * reasonDropdown.options.length);
+
+            updateLiveProfile();
+        }
+
 
         /**
          * Handles the click event for fetching average costs or plans.
@@ -368,45 +696,29 @@
             const brandSourceId = button.dataset.brandSource;
             const brand = brandSourceId ? document.getElementById(brandSourceId).value.trim() : '';
 
-            // If it's a branded service, fetch plans. Otherwise, get a single average.
-            if (brand) {
-                const prompt = `List 3 common monthly plans for ${brand} ${type} in zip code ${zip}, from cheapest to most expensive.`;
-                const schema = {
-                    type: "ARRAY",
-                    items: {
-                        type: "OBJECT",
-                        properties: {
-                            "plan_name": { "type": "STRING" },
-                            "monthly_cost": { "type": "NUMBER" }
-                        },
-                        required: ["plan_name", "monthly_cost"]
-                    }
-                };
-                try {
-                    const plans = await callGeminiForJson(prompt, schema);
+            try {
+                if (brand) {
+                    const prompt = `Provide ONLY a JSON array of 3 common monthly plans for ${brand} ${type} in zip code ${zip}, from cheapest to most expensive. The JSON should be an array of objects, each with "plan_name" (string) and "monthly_cost" (number) properties. Do not include any text before or after the JSON array. Example: [{"plan_name": "Basic", "monthly_cost": 50.00}]`;
+                    const responseText = await callGeminiApi(prompt);
+                    const cleanedText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
+                    const plans = JSON.parse(cleanedText);
                     showPlanModal(plans, targetId, `${brand} ${type} Plans`);
-                } catch (error) {
-                    console.error("Plan fetch error:", error);
-                }
-            } else {
-                // Fetch single average for non-branded utilities
-                const prompt = `What is the average monthly cost for ${type} for a typical household in zip code ${zip}?`;
-                const schema = {
-                    type: "OBJECT",
-                    properties: { "average_cost": { "type": "NUMBER" } },
-                    required: ["average_cost"]
-                };
-                try {
-                    const result = await callGeminiForJson(prompt, schema);
+                } else {
+                    const prompt = `Provide ONLY a JSON object for the average monthly cost for ${type} for a typical household in zip code ${zip}. The JSON should have one key: "average_cost" (number). Do not include any text before or after the JSON object. Example: {"average_cost": 150.75}`;
+                    const responseText = await callGeminiApi(prompt);
+                    const cleanedText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
+                    const result = JSON.parse(cleanedText);
                     document.getElementById(targetId).value = result.average_cost.toFixed(2);
-                    updateSurplusIndicator();
-                } catch (error) {
-                    console.error("Average cost fetch error:", error);
+                    updateLiveProfile();
                 }
+            } catch (error) {
+                console.error("Average cost fetch error:", error);
+                // Optionally show an error message to the user in the UI
+            } finally {
+                spinner.classList.add('hidden');
+                buttonText.classList.remove('hidden');
+                button.disabled = false;
             }
-            spinner.classList.add('hidden');
-            buttonText.classList.remove('hidden');
-            button.disabled = false;
         }
 
         /**
@@ -423,11 +735,11 @@
                 list.className = 'space-y-2';
                 plans.forEach(plan => {
                     const item = document.createElement('li');
-                    item.className = 'p-3 border rounded-md hover:bg-gray-100 cursor-pointer flex justify-between items-center';
+                    item.className = 'p-3 border rounded-md hover:bg-slate-100 cursor-pointer flex justify-between items-center';
                     item.innerHTML = `<span>${plan.plan_name}</span> <span class="font-semibold">$${plan.monthly_cost.toFixed(2)}</span>`;
                     item.addEventListener('click', () => {
                         document.getElementById(targetId).value = plan.monthly_cost.toFixed(2);
-                        updateSurplusIndicator();
+                        updateLiveProfile();
                         closeModal();
                     });
                     list.appendChild(item);
@@ -448,20 +760,26 @@
         }
 
         /**
-         * Handles the main form submission to generate the persona profile.
-         * @param {Event} e - The form submission event.
+         * Main function to update the profile in real-time.
          */
-        async function handleFormSubmit(e) {
-            e.preventDefault();
+        async function updateLiveProfile() {
+            updateSurplusIndicator();
             
-            profileOutput.classList.remove('hidden');
-            profileContent.innerHTML = '';
-            loader.classList.remove('hidden');
-            generateBtn.disabled = true;
-            generateBtn.classList.add('opacity-50', 'cursor-not-allowed');
-
+            const age = document.getElementById('age').value;
+            const sex = document.getElementById('sex').value;
             const reason = document.getElementById('hardship-reason').value;
-            const income = parseFloat(document.getElementById('income-slider').value) || 0;
+            
+            let totalIncome = 0;
+            const incomeSources = [];
+            document.querySelectorAll('#income-sources-container > div').forEach(row => {
+                const amount = parseFloat(row.querySelector('.income-amount-input').value) || 0;
+                const type = row.querySelector('.income-type-input').value;
+                totalIncome += amount;
+                if (amount > 0) {
+                    incomeSources.push({ type, amount });
+                }
+            });
+
             const expenses = {};
             let totalExpenses = 0;
 
@@ -472,67 +790,213 @@
                 totalExpenses += value;
             });
 
-            const shortfall = income - totalExpenses;
+            if(totalExpenses === 0 && totalIncome === 0) {
+                 profileContent.innerHTML = `
+                    <div class="text-center text-slate-500 py-12">
+                        <p>Your generated profile will appear here.</p>
+                        <p class="text-sm mt-2">Adjust the details on the left to get started.</p>
+                    </div>`;
+                actionPlanSection.classList.add('hidden');
+                exportSection.classList.add('hidden');
+                return;
+            }
 
+            const shortfall = totalIncome - totalExpenses;
+            
+            currentFinancials = { income: totalIncome, incomeSources, expenses, shortfall, reason, age, sex };
+            
+            displayProfile(totalIncome, totalExpenses, shortfall, expenses, "...", reason); // Display with placeholder narrative
+            
+            actionPlanSection.classList.remove('hidden');
+            exportSection.classList.remove('hidden');
+            actionPlanContent.classList.add('hidden'); // Hide old action plan
+
+            // Debounce the API call for the narrative
+            clearTimeout(window.narrativeTimeout);
+            window.narrativeTimeout = setTimeout(async () => {
+                const prompt = `
+                    Generate a short, empathetic persona profile for a ${age}-year-old ${sex.toLowerCase()} facing financial hardship.
+                    The primary reason for their hardship is: "${reason}".
+                    Their monthly income is $${totalIncome}.
+                    Their total monthly expenses are $${totalExpenses}.
+                    This leaves them with a monthly ${shortfall >= 0 ? 'surplus' : 'shortfall'} of $${Math.abs(shortfall)}.
+                    Here is a breakdown of their key expenses: ${JSON.stringify(expenses)}.
+                    Based on these numbers and the reason for hardship, create a realistic and compelling narrative. Make it about 2-3 paragraphs long. Do not repeat the dollar amounts from the expense breakdown in the narrative, but use the types of expenses to inform the story. The story should feel personal and human. Give the person a name.
+                `;
+                try {
+                    const generatedText = await callGeminiApi(prompt);
+                    displayProfile(totalIncome, totalExpenses, shortfall, expenses, generatedText, reason);
+                } catch(err) {
+                    console.error("Narrative generation failed", err);
+                    displayProfile(totalIncome, totalExpenses, shortfall, expenses, "Could not generate narrative.", reason);
+                }
+            }, 1000); // Wait 1 second after user stops typing
+        }
+        
+        /**
+         * Handles the click event for the "Suggest an Action Plan" button.
+         */
+        async function handleGetActionPlan() {
+            actionPlanLoader.classList.remove('hidden');
+            getActionPlanBtn.disabled = true;
+            actionPlanContent.classList.add('hidden');
+
+            const { income, expenses, shortfall, reason, age, sex } = currentFinancials;
+            
             const prompt = `
-                Generate a short, empathetic persona profile for someone facing financial hardship.
-                The primary reason for their hardship is: "${reason}".
+                Act as an empathetic financial counselor. A ${age}-year-old ${sex.toLowerCase()} is facing financial hardship due to "${reason}".
                 Their monthly income is $${income}.
-                Their total monthly expenses are $${totalExpenses}.
-                This leaves them with a monthly ${shortfall >= 0 ? 'surplus' : 'shortfall'} of $${Math.abs(shortfall)}.
-                Here is a breakdown of their key expenses: ${JSON.stringify(expenses)}.
-                Based on these numbers and the reason for hardship, create a realistic and compelling narrative. Make it about 2-3 paragraphs long. Do not repeat the dollar amounts from the expense breakdown in the narrative, but use the types of expenses to inform the story. The story should feel personal and human. Give the person a name.
+                Their total monthly expenses result in a shortfall of $${Math.abs(shortfall)}.
+                Here is their expense breakdown: ${JSON.stringify(expenses)}.
+
+                Based on this, provide a concise, actionable, and encouraging list of 5-7 steps they could take to improve their financial situation. Focus on the most impactful areas from their budget. Frame it as a "Suggested Action Plan". Use markdown for a numbered list.
             `;
 
             try {
-                const generatedText = await callGeminiApi(prompt);
-                displayProfile(income, totalExpenses, shortfall, expenses, generatedText, reason);
+                const planText = await callGeminiApi(prompt);
+                actionPlanContent.innerHTML = planText.replace(/\n/g, '<br>'); // Basic formatting
+                actionPlanContent.classList.remove('hidden');
             } catch (error) {
-                console.error("Error generating profile:", error);
-                profileContent.innerHTML = `<div class="text-red-500 text-center">Sorry, something went wrong. Please try again.</div>`;
+                 console.error("Error generating action plan:", error);
+                 actionPlanContent.innerHTML = `<p class="text-red-500">Sorry, we couldn't generate an action plan at this time.</p>`;
+                 actionPlanContent.classList.remove('hidden');
             } finally {
-                loader.classList.add('hidden');
-                generateBtn.disabled = false;
-                generateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                actionPlanLoader.classList.add('hidden');
+                getActionPlanBtn.disabled = false;
             }
         }
-        
-        // --- API Call Functions ---
 
-        async function callApi(payload) {
+        /**
+         * Exports the current expense breakdown to a CSV file with formulas.
+         */
+        function exportToCsv() {
+            const { income, incomeSources, expenses } = currentFinancials;
+            let csvContent = "data:text/csv;charset=utf-8,";
+            
+            const expenseEntries = Object.entries(expenses);
+            
+            // Add summary with formulas
+            csvContent += "Category,Amount\n";
+            csvContent += "Income Sources,Amount\n";
+            incomeSources.forEach(source => {
+                 csvContent += `${source.type},${source.amount.toFixed(2)}\n`;
+            });
+            csvContent += `Total Income,"=SUM(B3:B${2 + incomeSources.length})"\n\n`;
+            
+            csvContent += "Expense Breakdown,Amount\n";
+            expenseEntries.forEach(([key, value]) => {
+                csvContent += `${key.replace(/,/g, '')},${value.toFixed(2)}\n`;
+            });
+            
+            const expenseStartRow = 3 + incomeSources.length + 2;
+            csvContent += `\nTotal Expenses,"=SUM(B${expenseStartRow}:B${expenseStartRow + expenseEntries.length -1})"\n`;
+            csvContent += `Surplus / Shortfall,"=B${3 + incomeSources.length}-B${expenseStartRow + expenseEntries.length}"\n`;
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "persona_expenses.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        /**
+         * Copies a formatted table of the financial summary to the clipboard.
+         */
+        function copyTableToClipboard() {
+            const { income, incomeSources, expenses, shortfall } = currentFinancials;
+            
+            let tableHTML = `<table style="border-collapse: collapse; width: 100%; font-family: sans-serif;">`;
+            
+            // Income
+            tableHTML += `
+                 <tr style="background-color: #e2e8f0;">
+                    <td style="padding: 8px; border: 1px solid #cbd5e1; font-weight: bold;" colspan="2">Income Sources</td>
+                </tr>
+            `;
+            incomeSources.forEach(source => {
+                tableHTML += `
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #e2e8f0;">${source.type}</td>
+                        <td style="padding: 8px; border: 1px solid #e2e8f0;">$${source.amount.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+
+
+            // Summary
+            tableHTML += `
+                <tr style="background-color: #f1f5f9;">
+                    <td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: bold;">Total Monthly Income</td>
+                    <td style="padding: 8px; border: 1px solid #e2e8f0; color: green;">$${income.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: bold;">Total Monthly Expenses</td>
+                    <td style="padding: 8px; border: 1px solid #e2e8f0; color: red;">$${(income - shortfall).toFixed(2)}</td>
+                </tr>
+                <tr style="background-color: #f1f5f9;">
+                    <td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: bold;">Surplus / Shortfall</td>
+                    <td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: bold; color: ${shortfall < 0 ? 'red' : 'green'};">$${Math.abs(shortfall).toFixed(2)}</td>
+                </tr>
+                <tr><td colspan="2" style="padding: 8px;"></td></tr>
+                <tr style="background-color: #e2e8f0;">
+                    <td style="padding: 8px; border: 1px solid #cbd5e1; font-weight: bold;" colspan="2">Expense Breakdown</td>
+                </tr>
+            `;
+
+            // Expenses
+            for (const [key, value] of Object.entries(expenses)) {
+                 tableHTML += `
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #e2e8f0;">${key}</td>
+                        <td style="padding: 8px; border: 1px solid #e2e8f0;">$${value.toFixed(2)}</td>
+                    </tr>
+                 `;
+            }
+
+            tableHTML += `</table>`;
+            
+            // Fallback method using a temporary textarea
+            const listener = (event) => {
+                event.preventDefault();
+                if (event.clipboardData) {
+                    event.clipboardData.setData('text/html', tableHTML);
+                    event.clipboardData.setData('text/plain', tableHTML.replace(/<[^>]*>?/gm, ''));
+                }
+            };
+            document.addEventListener('copy', listener);
+            document.execCommand('copy');
+            document.removeEventListener('copy', listener);
+
+            const originalText = copyBtn.innerHTML;
+            copyBtn.innerHTML = 'Copied!';
+            setTimeout(() => { copyBtn.innerHTML = originalText; }, 2000);
+        }
+
+        // --- API Call Functions ---
+        async function callGeminiApi(prompt) {
+            const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
             const apiKey = ""; 
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
-            if (!response.ok) throw new Error(`API call failed with status: ${response.status}`);
-            return await response.json();
-        }
 
-        async function callGeminiApi(prompt) {
-            const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
-            const result = await callApi(payload);
+            if (!response.ok) {
+                console.error("API Response Error:", await response.text());
+                throw new Error(`API call failed with status: ${response.status}`);
+            }
+            
+            const result = await response.json();
+
             if (result.candidates?.[0]?.content?.parts?.[0]) {
                 return result.candidates[0].content.parts[0].text;
             }
-            return "Could not generate a narrative for this persona.";
-        }
-
-        async function callGeminiForJson(prompt, schema) {
-            const payload = {
-                contents: [{ role: "user", parts: [{ text: prompt }] }],
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: schema
-                }
-            };
-            const result = await callApi(payload);
-             if (result.candidates?.[0]?.content?.parts?.[0]) {
-                return JSON.parse(result.candidates[0].content.parts[0].text);
-            }
-            throw new Error("Could not parse JSON from API response.");
+            return "Could not generate a response.";
         }
 
         /**
@@ -541,30 +1005,30 @@
         function displayProfile(income, totalExpenses, shortfall, expenses, narrative, reason) {
             let expenseListHtml = '';
             for (const [key, value] of Object.entries(expenses)) {
-                expenseListHtml += `<li class="flex justify-between py-1"><span class="text-gray-600">${key}</span><span>$${value.toFixed(2)}</span></li>`;
+                expenseListHtml += `<li class="flex justify-between py-2 border-b border-slate-100"><span class="text-slate-600">${key}</span><span class="font-medium text-slate-800">$${value.toFixed(2)}</span></li>`;
             }
 
-            const shortfallClass = shortfall < 0 ? 'text-red-600' : 'text-green-600';
+            const shortfallClass = shortfall < 0 ? 'text-red-600' : 'text-emerald-600';
             const shortfallLabel = shortfall < 0 ? 'Monthly Shortfall' : 'Monthly Surplus';
 
             profileContent.innerHTML = `
-                <h2 class="text-2xl font-semibold mb-4 border-b pb-3">Persona Profile</h2>
+                <h2 class="text-2xl font-semibold mb-4 border-b pb-3 text-slate-900">Persona Profile</h2>
                 <div class="mb-6">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Reason for Hardship</h3>
+                    <h3 class="text-lg font-semibold text-slate-800 mb-2">Reason for Hardship</h3>
                     <p class="text-sm text-indigo-600 font-medium mb-2">${reason}</p>
-                    <p class="text-gray-600 whitespace-pre-wrap">${narrative}</p>
+                    <p class="text-slate-600 whitespace-pre-wrap leading-relaxed">${narrative}</p>
                 </div>
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Financial Summary</h3>
+                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-3">Financial Summary</h3>
                     <ul class="space-y-2 text-sm">
-                        <li class="flex justify-between py-2 border-b"><span class="font-medium text-gray-700">Total Monthly Income</span><span class="font-medium text-green-600">$${income.toFixed(2)}</span></li>
-                        <li class="flex justify-between py-2 border-b"><span class="font-medium text-gray-700">Total Monthly Expenses</span><span class="font-medium text-red-600">$${totalExpenses.toFixed(2)}</span></li>
+                        <li class="flex justify-between py-2 border-b border-slate-200"><span class="font-medium text-slate-700">Total Monthly Income</span><span class="font-medium text-emerald-600">$${income.toFixed(2)}</span></li>
+                        <li class="flex justify-between py-2 border-b border-slate-200"><span class="font-medium text-slate-700">Total Monthly Expenses</span><span class="font-medium text-red-600">$${totalExpenses.toFixed(2)}</span></li>
                         <li class="flex justify-between py-2 font-bold text-lg"><span>${shortfallLabel}</span><span class="${shortfallClass}">$${Math.abs(shortfall).toFixed(2)}</span></li>
                     </ul>
                 </div>
                 <div class="mt-6">
-                     <h3 class="text-lg font-semibold text-gray-800 mb-3">Complete Expense Breakdown</h3>
-                     <ul class="text-sm divide-y divide-gray-200">${expenseListHtml}</ul>
+                     <h3 class="text-lg font-semibold text-slate-800 mb-3">Complete Expense Breakdown</h3>
+                     <ul class="text-sm space-y-1">${expenseListHtml}</ul>
                 </div>
             `;
         }
